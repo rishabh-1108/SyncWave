@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify - Web Player</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-brands fa-spotify"></i>
+                <span>Spotify</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="#"><i class="fa-solid fa-magnifying-glass"></i> Search</a>
+            </nav>
+            <div class="library">
+                <div class="library-header">
+                    <a href="#"><i class="fa-solid fa-book-open"></i> Your Library</a>
+                    <div class="library-actions">
+                        <i class="fa-solid fa-plus"></i>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="library-content">
+                    <div class="library-filters">
+                        <button class="filter-btn">Playlists</button>
+                        <button class="filter-btn">Artists</button>
+                    </div>
+                    <!-- Playlists will go here -->
+                    <div class="playlist-item">
+                        <img src="./assets/album_cover.png" alt="Liked Songs">
+                        <div class="playlist-info">
+                            <h4>Liked Songs</h4>
+                            <p>Playlist • 150 songs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="nav-arrows">
+                    <button class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="nav-btn disabled"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="topbar-actions">
+                    <button class="premium-btn">Explore Premium</button>
+                    <button class="install-btn"><i class="fa-regular fa-circle-down"></i> Install App</button>
+                    <button class="profile-btn"><i class="fa-regular fa-user"></i></button>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="hero-section">
+                    <img src="./assets/album_cover.png" alt="Playlist Cover" class="hero-image">
+                    <div class="hero-info">
+                        <span class="hero-type">Playlist</span>
+                        <h1 class="hero-title">Your Mix</h1>
+                        <p class="hero-description">A custom mix of tracks perfectly curated for you based on the links provided.</p>
+                        <div class="hero-meta">
+                            <span class="spotify-logo-small"><i class="fa-brands fa-spotify"></i> Spotify</span>
+                            <span class="dot">•</span>
+                            <span id="total-songs">0 songs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button class="play-btn-large" id="main-play-btn"><i class="fa-solid fa-play"></i></button>
+                    <button class="action-icon"><i class="fa-regular fa-heart"></i></button>
+                    <button class="action-icon"><i class="fa-solid fa-ellipsis"></i></button>
+                </div>
+
+                <div class="song-list-container">
+                    <div class="song-list-header">
+                        <div class="col-id">#</div>
+                        <div class="col-title">Title</div>
+                        <div class="col-album">Album</div>
+                        <div class="col-duration"><i class="fa-regular fa-clock"></i></div>
+                    </div>
+                    <div class="song-list" id="song-list">
+                        <!-- Songs dynamically injected here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Player Bar -->
+    <footer class="player-bar">
+        <div class="now-playing">
+            <img src="./assets/album_cover.png" alt="Album Cover" id="player-cover">
+            <div class="track-info">
+                <h4 id="player-title">Select a track</h4>
+                <p id="player-artist">Artist</p>
+            </div>
+            <button class="like-btn"><i class="fa-regular fa-heart"></i></button>
+        </div>
+
+        <div class="player-controls">
+            <div class="control-buttons">
+                <button class="control-icon" id="shuffle-btn"><i class="fa-solid fa-shuffle"></i></button>
+                <button class="control-icon" id="prev-btn"><i class="fa-solid fa-backward-step"></i></button>
+                <button class="play-pause-btn" id="play-pause-btn"><i class="fa-solid fa-play"></i></button>
+                <button class="control-icon" id="next-btn"><i class="fa-solid fa-forward-step"></i></button>
+                <button class="control-icon" id="repeat-btn"><i class="fa-solid fa-repeat"></i></button>
+            </div>
+            <div class="playback-bar">
+                <span class="time-current" id="current-time">0:00</span>
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar">
+                        <div class="progress-handle"></div>
+                    </div>
+                </div>
+                <span class="time-total" id="total-time">0:00</span>
+            </div>
+        </div>
+
+        <div class="volume-controls">
+            <button class="control-icon"><i class="fa-solid fa-list-ul"></i></button>
+            <button class="control-icon"><i class="fa-solid fa-desktop"></i></button>
+            <button class="control-icon" id="mute-btn"><i class="fa-solid fa-volume-high"></i></button>
+            <div class="volume-bar-container" id="volume-container">
+                <div class="volume-bar" id="volume-bar">
+                    <div class="volume-handle"></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Hidden audio element -->
+    <audio id="audio-element"></audio>
+    
+    <script src="app.js"></script>
+</body>
+</html>
