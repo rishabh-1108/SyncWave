@@ -35,16 +35,12 @@ const rawUrls = [
     "https://res.cloudinary.com/dgtdgt126/video/upload/q_auto/f_auto/v1778689062/Hukum---Thalaivar-Alappara-MassTamilan.dev_jhoiiu.mp3"
 ];
 
-// Helper to format track name from URL
 function formatTitle(url) {
     const parts = url.split('/');
     const filename = parts[parts.length - 1];
-    // Remove extension and hash suffix (e.g. _qekbq2)
     let title = filename.replace(/\.[^/.]+$/, "");
     title = title.replace(/_[a-z0-9]{6}$/, "");
-    // Remove "MassTamilan" tags
     title = title.replace(/-MassTamilan\.(dev|fm|so|org)/gi, "");
-    // Replace underscores and dashes with spaces
     title = title.replace(/[-_]/g, " ");
     return title.trim();
 }
@@ -52,9 +48,8 @@ function formatTitle(url) {
 const songs = rawUrls.map(url => {
     return {
         title: formatTitle(url),
-        artist: "Various Artists", // Simplified since we don't have metadata
-        album: "Your Mix",
-        cover: "./assets/album_cover.png",
+        artist: "Sync-Wave Artists",
+        cover: "./assets/sync_wave.png",
         url: url
     };
 });
@@ -63,57 +58,57 @@ const songs = rawUrls.map(url => {
 const audio = document.getElementById('audio-element');
 const songListContainer = document.getElementById('song-list');
 const playPauseBtn = document.getElementById('play-pause-btn');
-const mainPlayBtn = document.getElementById('main-play-btn');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
+
 const progressBar = document.getElementById('progress-bar');
 const progressContainer = document.getElementById('progress-container');
 const volumeBar = document.getElementById('volume-bar');
 const volumeContainer = document.getElementById('volume-container');
+
 const currentTimeEl = document.getElementById('current-time');
 const totalTimeEl = document.getElementById('total-time');
-const playerTitle = document.getElementById('player-title');
-const playerArtist = document.getElementById('player-artist');
-const playerCover = document.getElementById('player-cover');
+
+// Main Player Visuals
+const mainTitle = document.getElementById('main-title');
+const mainArtist = document.getElementById('main-artist');
+const mainArtwork = document.getElementById('main-artwork');
+
+// Dock Visuals
+const dockTitle = document.getElementById('dock-title');
+const dockArtist = document.getElementById('dock-artist');
+const dockCover = document.getElementById('dock-cover');
 const totalSongsEl = document.getElementById('total-songs');
-const topbar = document.querySelector('.topbar');
 
 let currentSongIndex = 0;
 let isPlaying = false;
 
 // Initialize
 function init() {
-    totalSongsEl.textContent = `${songs.length} songs`;
+    totalSongsEl.textContent = `${songs.length} Tracks`;
     renderSongList();
     loadSong(songs[currentSongIndex]);
 }
 
-// Render Song List
 function renderSongList() {
     songListContainer.innerHTML = '';
     songs.forEach((song, index) => {
-        const row = document.createElement('div');
-        row.className = 'song-row';
-        row.dataset.index = index;
+        const item = document.createElement('div');
+        item.className = 'song-item';
+        item.dataset.index = index;
         
-        row.innerHTML = `
-            <div class="song-id">
-                <span class="song-id-num">${index + 1}</span>
-                <i class="fa-solid fa-play song-play-icon"></i>
-            </div>
+        item.innerHTML = `
+            <img src="${song.cover}" alt="Cover" class="song-thumb">
             <div class="song-info">
-                <img src="${song.cover}" alt="Cover">
-                <div class="song-title-artist">
-                    <span class="song-title">${song.title}</span>
-                    <span class="song-artist">${song.artist}</span>
-                </div>
+                <div class="song-title">${song.title}</div>
+                <div class="song-artist">${song.artist}</div>
             </div>
-            <div class="song-album">${song.album}</div>
-            <div class="song-duration">-:--</div>
+            <div class="song-action">
+                <i class="fa-solid fa-play play-indicator"></i>
+            </div>
         `;
         
-        // Add click listener
-        row.addEventListener('click', () => {
+        item.addEventListener('click', () => {
             if (currentSongIndex === index && isPlaying) {
                 pauseSong();
             } else if (currentSongIndex === index && !isPlaying) {
@@ -125,51 +120,50 @@ function renderSongList() {
             }
         });
         
-        songListContainer.appendChild(row);
+        songListContainer.appendChild(item);
     });
 }
 
-// Update Active Row Styling
 function updateActiveRow() {
-    document.querySelectorAll('.song-row').forEach(row => {
-        row.classList.remove('playing');
-        const icon = row.querySelector('.song-play-icon');
-        const num = row.querySelector('.song-id-num');
+    document.querySelectorAll('.song-item').forEach(row => {
+        row.classList.remove('active');
+        const icon = row.querySelector('.play-indicator');
         
         if (parseInt(row.dataset.index) === currentSongIndex) {
-            row.classList.add('playing');
+            row.classList.add('active');
             if(isPlaying) {
-                icon.className = 'fa-solid fa-pause song-play-icon';
-                icon.style.display = 'block';
-                num.style.display = 'none';
+                icon.className = 'fa-solid fa-pause play-indicator';
+                mainArtwork.classList.add('playing');
             } else {
-                icon.className = 'fa-solid fa-play song-play-icon';
-                icon.style.display = '';
-                num.style.display = '';
+                icon.className = 'fa-solid fa-play play-indicator';
+                mainArtwork.classList.remove('playing');
             }
         } else {
-            icon.className = 'fa-solid fa-play song-play-icon';
-            icon.style.display = '';
-            num.style.display = '';
+            icon.className = 'fa-solid fa-play play-indicator';
         }
     });
 }
 
-// Load Song
 function loadSong(song) {
     audio.src = song.url;
-    playerTitle.textContent = song.title;
-    playerArtist.textContent = song.artist;
-    playerCover.src = song.cover;
+    
+    // Update Main UI
+    mainTitle.textContent = song.title;
+    mainArtist.textContent = song.artist;
+    mainArtwork.src = song.cover;
+    
+    // Update Dock
+    dockTitle.textContent = song.title;
+    dockArtist.textContent = song.artist;
+    dockCover.src = song.cover;
+    
     updateActiveRow();
 }
 
-// Play & Pause
 function playSong() {
     isPlaying = true;
     audio.play();
     playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-    mainPlayBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
     updateActiveRow();
 }
 
@@ -177,11 +171,9 @@ function pauseSong() {
     isPlaying = false;
     audio.pause();
     playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-    mainPlayBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
     updateActiveRow();
 }
 
-// Next & Prev
 function prevSong() {
     currentSongIndex--;
     if (currentSongIndex < 0) {
@@ -200,7 +192,6 @@ function nextSong() {
     playSong();
 }
 
-// Format Time
 function formatTime(seconds) {
     if (isNaN(seconds)) return "0:00";
     const mins = Math.floor(seconds / 60);
@@ -208,7 +199,6 @@ function formatTime(seconds) {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 }
 
-// Update Progress
 function updateProgress(e) {
     const { duration, currentTime } = e.srcElement;
     if (isNaN(duration)) return;
@@ -220,7 +210,6 @@ function updateProgress(e) {
     totalTimeEl.textContent = formatTime(duration);
 }
 
-// Set Progress
 function setProgress(e) {
     const width = this.clientWidth;
     const clickX = e.offsetX;
@@ -229,7 +218,6 @@ function setProgress(e) {
     audio.currentTime = (clickX / width) * duration;
 }
 
-// Set Volume
 function setVolume(e) {
     const width = this.clientWidth;
     const clickX = e.offsetX;
@@ -239,21 +227,11 @@ function setVolume(e) {
     volumeBar.style.width = `${volumePercent * 100}%`;
 }
 
-// Event Listeners
 playPauseBtn.addEventListener('click', () => {
-    const isAudioPaused = audio.paused;
-    if (isAudioPaused) {
+    if (audio.paused) {
         playSong();
     } else {
         pauseSong();
-    }
-});
-
-mainPlayBtn.addEventListener('click', () => {
-    if (isPlaying) {
-        pauseSong();
-    } else {
-        playSong();
     }
 });
 
@@ -264,15 +242,5 @@ audio.addEventListener('ended', nextSong);
 progressContainer.addEventListener('click', setProgress);
 volumeContainer.addEventListener('click', setVolume);
 
-// Topbar scroll effect
-const mainContent = document.querySelector('.main-content');
-mainContent.addEventListener('scroll', () => {
-    if (mainContent.scrollTop > 50) {
-        topbar.classList.add('scrolled');
-    } else {
-        topbar.classList.remove('scrolled');
-    }
-});
-
-// Run Init
+// Initialization
 init();
